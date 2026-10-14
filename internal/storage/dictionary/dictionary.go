@@ -2,8 +2,8 @@ package dictionary
 
 type Dictionary map[string]string
 
-func Create() *map[string]string {
-	d := make(map[string]string)
+func Create() *Dictionary {
+	d := make(Dictionary)
 	return &d
 }
 
@@ -12,4 +12,11 @@ func (d Dictionary) Add(word, translate string) error {
 	return nil
 }
 
-//доделтаь вывод списка, подумав про то, как сделать так, чтобы вывод словаря был независимым
+func (d Dictionary) Delete(word string) error {
+	delete(d, word)
+	return nil
+}
+
+func (d Dictionary) ReturnInfo() map[string]string {
+	return d
+}
