@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"exerciser/internal/storage/dictionary"
+	results "exerciser/internal/storage/results"
 	"maps"
 	"testing"
 )
@@ -29,6 +30,10 @@ func (fs FakeStorage) ValidateUnexist(word string) error {
 	return nil
 }
 
+func (fs FakeStorage) ValidateWordsAmount(amount int) error {
+	return nil
+}
+
 func (fs FakeStorage) ReturnInfo() map[string]string {
 	newMap := make(map[string]string)
 	return newMap
@@ -38,9 +43,11 @@ func TestNewPair(t *testing.T) {
 	tests := []struct {
 		name        string
 		storage     dictionary.Dictionary
+		results     results.ResultStorage
 		word        string
 		translate   string
 		wantStorage dictionary.Dictionary
+		wantResults results.ResultStorage
 		wantErr     error
 	}{
 		{
@@ -48,11 +55,21 @@ func TestNewPair(t *testing.T) {
 			storage: dictionary.Dictionary{
 				"Car": "Машина",
 			},
+			results: []map[string]string{
+				{
+					"bird": "correct",
+				},
+			},
 			word:      "bird",
 			translate: "птица",
 			wantStorage: dictionary.Dictionary{
 				"Car":  "Машина",
 				"bird": "птица",
+			},
+			wantResults: []map[string]string{
+				{
+					"bird": "correct",
+				},
 			},
 			wantErr: nil,
 		},
@@ -86,7 +103,7 @@ func TestNewPair(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service := New(tt.storage)
+			service := NewWordStorage(tt.storage, &tt.results)
 			err := service.NewPair(tt.word, tt.translate)
 
 			if !errors.Is(err, tt.wantErr) {
@@ -95,6 +112,12 @@ func TestNewPair(t *testing.T) {
 
 			if !maps.Equal(tt.storage, tt.wantStorage) {
 				t.Errorf("expected dictionary %v, got %v", tt.wantStorage, tt.storage)
+			}
+
+			for i := range tt.wantResults {
+				if !maps.Equal(tt.results[i], tt.wantResults[i]) {
+					t.Errorf("expected result %v, got %v", tt.results[i], tt.wantResults[i])
+				}
 			}
 		})
 	}
@@ -105,7 +128,9 @@ func TestDeletePair(t *testing.T) {
 		name        string
 		storage     dictionary.Dictionary
 		word        string
+		results     results.ResultStorage
 		wantStorage dictionary.Dictionary
+		wantResults results.ResultStorage
 		wantErr     error
 	}{
 		{
@@ -114,9 +139,19 @@ func TestDeletePair(t *testing.T) {
 				"Car":  "Машина",
 				"bird": "птица",
 			},
+			results: []map[string]string{
+				{
+					"bird": "correct",
+				},
+			},
 			word: "bird",
 			wantStorage: dictionary.Dictionary{
 				"Car": "Машина",
+			},
+			wantResults: []map[string]string{
+				{
+					"bird": "correct",
+				},
 			},
 			wantErr: nil,
 		},
@@ -127,10 +162,20 @@ func TestDeletePair(t *testing.T) {
 				"Car":  "Машина",
 				"bird": "птица",
 			},
+			results: []map[string]string{
+				{
+					"bird": "correct",
+				},
+			},
 			word: "Dinamo",
 			wantStorage: dictionary.Dictionary{
 				"Car":  "Машина",
 				"bird": "птица",
+			},
+			wantResults: []map[string]string{
+				{
+					"bird": "correct",
+				},
 			},
 			wantErr: dictionary.ErrWordUnexist,
 		},
@@ -138,7 +183,7 @@ func TestDeletePair(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service := New(tt.storage)
+			service := NewWordStorage(tt.storage, &tt.results)
 			err := service.DeletePair(tt.word)
 
 			if !errors.Is(err, tt.wantErr) {
@@ -148,6 +193,12 @@ func TestDeletePair(t *testing.T) {
 			if !maps.Equal(tt.storage, tt.wantStorage) {
 				t.Errorf("expected dictionary %v, got %v", tt.wantStorage, tt.storage)
 			}
+
+			for i := range tt.wantResults {
+				if !maps.Equal(tt.results[i], tt.wantResults[i]) {
+					t.Errorf("expected result %v, got %v", tt.results[i], tt.wantResults[i])
+				}
+			}
 		})
 	}
 }
@@ -156,25 +207,57 @@ func TestNewPairFakeStorage(t *testing.T) {
 	storage := FakeStorage{}
 	word := "Dinamo"
 	translate := "Fake"
+	oneResult := results.ResultStorage{
+		{
+			"bird": "correct",
+		},
+	}
+	wantResults := results.ResultStorage{
+		{
+			"bird": "correct",
+		},
+	}
 	wantErr := errFake
 
-	service := New(storage)
+	service := NewWordStorage(storage, &oneResult)
 	err := service.NewPair(word, translate)
 
 	if !errors.Is(err, wantErr) {
 		t.Fatalf("expected error %v, got %v", wantErr, err)
 	}
+
+	for i := range wantResults {
+		if !maps.Equal(oneResult[i], wantResults[i]) {
+			t.Errorf("expected result %v, got %v", oneResult[i], wantResults[i])
+		}
+	}
+
 }
 
 func TestDeletePairFakeStorage(t *testing.T) {
 	storage := FakeStorage{}
 	word := "Dinamo"
 	wantErr := errFake
-
-	service := New(storage)
+	oneResult := results.ResultStorage{
+		{
+			"bird": "correct",
+		},
+	}
+	wantResults := results.ResultStorage{
+		{
+			"bird": "correct",
+		},
+	}
+	service := NewWordStorage(storage, &oneResult)
 	err := service.DeletePair(word)
 
 	if !errors.Is(err, wantErr) {
 		t.Fatalf("expected error %v, got %v", wantErr, err)
+	}
+
+	for i := range wantResults {
+		if !maps.Equal(oneResult[i], wantResults[i]) {
+			t.Errorf("expected result %v, got %v", oneResult[i], wantResults[i])
+		}
 	}
 }

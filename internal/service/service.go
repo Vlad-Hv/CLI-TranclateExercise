@@ -6,7 +6,8 @@ import (
 )
 
 type Service struct {
-	Storage storage.Storage
+	Storage storage.WordStorage
+	Results storage.ResultStorage
 }
 
 func (s Service) NewPair(word, translate string) error {
@@ -27,8 +28,8 @@ func (s Service) DeletePair(word string) error {
 	return nil
 }
 
-func New(storage storage.Storage) *Service {
-	return &Service{Storage: storage}
+func NewWordStorage(storage storage.WordStorage, result storage.ResultStorage) *Service {
+	return &Service{Storage: storage, Results: result}
 }
 
 //в обработчик добавить меню, пересобрать функции сервсиа в цикле меню

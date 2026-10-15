@@ -57,3 +57,22 @@ func DictionaryMenu() (int, error) {
 
 	return option, err
 }
+
+func GetAmoutWords() (int, error) {
+	var amount int
+	amountWord()
+	_, err := fmt.Scanln(&amount)
+
+	if err := validateMenu(amount, err); err != nil {
+		return 0, err
+	}
+
+	return amount, nil
+}
+
+func GetTranslate(word string) string {
+	var t string
+	translate(word)
+	fmt.Scanln(&t)
+	return t
+}
