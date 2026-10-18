@@ -4,12 +4,14 @@ import (
 	"exerciser/internal/cli"
 	"exerciser/internal/service"
 	"exerciser/internal/storage/dictionary"
+	result "exerciser/internal/storage/results"
 	"fmt"
 )
 
 func main() {
 	dictionary := dictionary.Create()
-	service := service.New(dictionary)
+	results := result.NewStorage()
+	service := service.NewWordStorage(dictionary, &results)
 
 	for {
 		if isEnded, err := cli.Menu(*service); err != nil {

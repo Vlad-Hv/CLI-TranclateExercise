@@ -37,6 +37,27 @@ func TestAdd(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	wantMap := Dictionary{
+		"Bird": "Птица",
+	}
+	var wantErr error = nil
+
+	dictionary := Dictionary{
+		"Bird": "Птица",
+		"Car":  "Машина",
+	}
+	err := dictionary.Delete("Car")
+
+	if !errors.Is(err, wantErr) {
+		t.Fatalf("expected error %v, got %v", wantErr, err)
+	}
+
+	if !maps.Equal(dictionary, wantMap) {
+		t.Errorf("expected map %v, got %v", wantMap, dictionary)
+	}
+}
+
 func TestReturnInfo(t *testing.T) {
 	wantMap := Dictionary{
 		"Bird": "Птица",

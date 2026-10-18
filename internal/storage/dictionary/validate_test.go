@@ -109,3 +109,53 @@ func TestValidateUnexist(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateWordsAmount(t *testing.T) {
+	tests := []struct {
+		name    string
+		amount  int
+		d       Dictionary
+		wantD   Dictionary
+		wantErr error
+	}{
+		{
+			name:   "success case",
+			amount: 2,
+			d: Dictionary{
+				"Word": "Слово",
+				"Lion": "Лев",
+			},
+			wantD: Dictionary{
+				"Word": "Слово",
+				"Lion": "Лев",
+			},
+			wantErr: nil,
+		},
+		{
+			name:   "error case",
+			amount: 3,
+			d: Dictionary{
+				"Word": "Слово",
+				"Lion": "Лев",
+			},
+			wantD: Dictionary{
+				"Word": "Слово",
+				"Lion": "Лев",
+			},
+			wantErr: ErrWordsNotEnough,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.d.ValidateWordsAmount(tt.amount)
+
+			if !errors.Is(err, tt.wantErr) {
+				t.Fatalf("expected error %v, got %v", tt.wantErr, err)
+			}
+
+			if !maps.Equal(tt.d, tt.wantD) {
+				t.Errorf("expected dictionary %v, got %v", tt.wantD, tt.d)
+			}
+		})
+	}
+}
