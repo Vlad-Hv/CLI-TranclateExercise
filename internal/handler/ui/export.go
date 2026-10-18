@@ -67,7 +67,7 @@ func Uncorrect() {
 
 func PrintResults(results []map[string]string) {
 	for i := range results {
-		fmt.Printf("Training session %v:\n", i+1)
+		fmt.Printf("\nTraining session %v:\n", i+1)
 		for word, result := range results[i] {
 			fmt.Println("Word:", word)
 			fmt.Println("Result:", result)
