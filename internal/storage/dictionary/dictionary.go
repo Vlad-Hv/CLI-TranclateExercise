@@ -18,5 +18,9 @@ func (d Dictionary) Delete(word string) error {
 }
 
 func (d Dictionary) ReturnInfo() map[string]string {
-	return d
+	newMap := make(map[string]string)
+	for word, result := range newMap {
+		newMap[word] = result
+	}
+	return newMap
 }

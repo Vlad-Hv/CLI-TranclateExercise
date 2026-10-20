@@ -2,6 +2,8 @@ package service
 
 import (
 	"errors"
+	result "exerciser/internal/storage/results"
+	"maps"
 	"testing"
 )
 
@@ -119,19 +121,34 @@ func TestSaveResultFake(t *testing.T) {
 
 func TestSaveResult(t *testing.T) {
 	tests := []struct {
-		name    string
-		result  map[string]string
-		s       Service
-		wantErr error
+		name        string
+		result      map[string]string
+		s           Service
+		wantResults result.ResultStorage
+		wantErr     error
 	}{
 		{
-			name: "error case",
+			name: "success case",
 			s: Service{
-				Results: FakeSuccessResult{},
+				Results: &result.ResultStorage{
+					{
+						"cat": "кот",
+					},
+				},
 			},
 			result: map[string]string{
 				"car": "correct",
 				"cat": "correct",
+			},
+			wantResults: result.ResultStorage{
+				{
+					"cat": "кот",
+				},
+
+				{
+					"car": "correct",
+					"cat": "correct",
+				},
 			},
 
 			wantErr: nil,
@@ -143,6 +160,21 @@ func TestSaveResult(t *testing.T) {
 			err := tt.s.SaveResult(tt.result)
 			if !errors.Is(err, tt.wantErr) {
 				t.Errorf("Expected error %v, got %v", tt.wantErr, err)
+			}
+
+			results, ok := tt.s.Results.(*result.ResultStorage)
+
+			if !ok {
+				t.Fatalf("expected existing")
+			}
+
+			if len(*results) != len(tt.wantResults) {
+				t.Fatalf("expected len %v, got %v", len(tt.wantResults), len(*results))
+			}
+			for i := range *results {
+				if !maps.Equal((*results)[i], tt.wantResults[i]) {
+					t.Errorf("expected map %v, got %v", (*results)[i], tt.wantResults[i])
+				}
 			}
 		})
 	}

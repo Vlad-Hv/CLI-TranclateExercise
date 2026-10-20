@@ -75,6 +75,11 @@ func PrintResults(results []map[string]string) {
 	}
 }
 
-func PrintResult(amount, correct int) {
+func PrintResult(amount, correct int, result map[string]string) {
+	fmt.Println("\nResult:")
+	for w, r := range result {
+		fmt.Println(w, ":", r)
+	}
+	fmt.Println()
 	fmt.Println(correct, "of", amount)
 }

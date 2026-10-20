@@ -95,6 +95,6 @@ func Training(s service.Service, amount int, in *bufio.Scanner) error {
 		return err
 	}
 
-	ui.PrintResult(amount, correct)
+	ui.PrintResult(amount, correct, result)
 	return nil
 }
