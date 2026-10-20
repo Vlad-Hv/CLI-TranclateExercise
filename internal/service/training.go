@@ -1,42 +1,17 @@
 package service
 
 import (
-	"exerciser/internal/handler/ui"
 	"strings"
 )
 
-func (s Service) Training(amount int) error {
-	if err := s.Storage.ValidateWordsAmount(amount); err != nil {
-		return err
+func CheckAnswer(translate, userResponce string) bool {
+	t, ur := modifyWords(translate, userResponce)
+
+	if strings.EqualFold(t, ur) {
+		return true
+	} else {
+		return false
 	}
-	result := make(map[string]string)
-	var counter int
-	words := s.Storage.ReturnInfo()
-
-	for word, translate := range words {
-		userResponce := ui.GetTranslate(word)
-		t, r := modifyWords(translate, userResponce)
-
-		if strings.EqualFold(t, r) {
-			result[word] = "correct"
-			ui.Correct()
-		} else {
-			result[word] = "mistake"
-			ui.Uncorrect()
-		}
-		counter++
-
-		if counter >= amount {
-			break
-		}
-	}
-
-	err := s.Results.Add(result)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func modifyWords(t, r string) (string, string) {
@@ -44,4 +19,13 @@ func modifyWords(t, r string) (string, string) {
 	responce := strings.TrimSpace(r)
 
 	return translate, responce
+}
+
+func (s *Service) SaveResult(result map[string]string) error {
+	err := s.Results.Add(result)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

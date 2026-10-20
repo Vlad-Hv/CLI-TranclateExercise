@@ -11,6 +11,9 @@ type Service struct {
 }
 
 func (s Service) NewPair(word, translate string) error {
+	if err := validatePair(word, translate); err != nil {
+		return fmt.Errorf("cannot make new word and translate pair: %w", err)
+	}
 	if err := s.Storage.ValidateExist(word); err != nil {
 		return fmt.Errorf("cannot make new word and translate pair: %w", err)
 	}

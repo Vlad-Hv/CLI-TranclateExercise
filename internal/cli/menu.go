@@ -1,14 +1,15 @@
 package cli
 
 import (
+	"bufio"
 	"exerciser/internal/handler/ui"
 	"exerciser/internal/service"
 )
 
-func Menu(s service.Service) (bool, error) {
+func Menu(s service.Service, in *bufio.Scanner) (bool, error) {
 	const programStop bool = true
 	const programContinue bool = false
-	option, err := ui.MenuOption()
+	option, err := ui.MenuOption(in)
 
 	if err != nil {
 		return programContinue, err
@@ -19,20 +20,20 @@ func Menu(s service.Service) (bool, error) {
 	}
 	switch option {
 	case 1:
-		err := dictionaryMenu(s)
+		err := dictionaryMenu(s, in)
 		if err != nil {
 			return programContinue, err
 		}
 	case 2:
-		wordsAmount, err := ui.GetAmoutWords()
+		wordsAmount, err := ui.GetAmoutWords(in)
 		if err != nil {
 			return programContinue, err
 		}
-		err = s.Training(wordsAmount)
+
+		err = Training(s, wordsAmount, in)
 		if err != nil {
 			return programContinue, err
 		}
-		//success message
 
 	case 3:
 		results := s.Results.ReturnResults()

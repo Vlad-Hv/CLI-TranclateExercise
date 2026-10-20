@@ -74,3 +74,7 @@ func PrintResults(results []map[string]string) {
 		}
 	}
 }
+
+func PrintResult(amount, correct int) {
+	fmt.Println(correct, "of", amount)
+}
