@@ -1,21 +1,28 @@
 package ui
 
 import (
+	"bufio"
 	"fmt"
 )
 
-func NewPair() (string, string, error) {
-	var word string
+func NewPair(in *bufio.Scanner) (string, string, error) {
 	var translate string
 
 	askWord()
-	fmt.Scanln(&word)
+	word, err := readLine(in)
+	if err != nil {
+		return "", "", fmt.Errorf("Cannot get word with translate: %w", err)
+	}
+
 	if err := validateImport(word); err != nil {
 		return "", "", fmt.Errorf("Cannot get word with translate: %w", err)
 	}
 
 	askTranslate()
-	fmt.Scanln(&translate)
+	translate, err = readLine(in)
+	if err != nil {
+		return "", "", fmt.Errorf("Cannot get word with translate: %w", err)
+	}
 	if err := validateImport(translate); err != nil {
 		return "", "", fmt.Errorf("Cannot get word with translate: %w", err)
 	}
@@ -23,10 +30,12 @@ func NewPair() (string, string, error) {
 	return word, translate, nil
 }
 
-func DeleteWord() (string, error) {
-	var word string
+func DeleteWord(in *bufio.Scanner) (string, error) {
 	askWord()
-	fmt.Scanln(&word)
+	word, err := readLine(in)
+	if err != nil {
+		return "", err
+	}
 
 	if err := validateImport(word); err != nil {
 		return "", fmt.Errorf("Cannot delete word: %w", err)
@@ -34,10 +43,12 @@ func DeleteWord() (string, error) {
 	return word, nil
 }
 
-func MenuOption() (int, error) {
-	var option int
+func MenuOption(in *bufio.Scanner) (int, error) {
 	menu()
-	_, err := fmt.Scanln(&option)
+	option, err := readInt(in)
+	if err != nil {
+		return 0, err
+	}
 
 	if err = validateMenu(option, err); err != nil {
 		return 0, err
@@ -46,11 +57,12 @@ func MenuOption() (int, error) {
 	return option, err
 }
 
-func DictionaryMenu() (int, error) {
-	var option int
+func DictionaryMenu(in *bufio.Scanner) (int, error) {
 	dictionaryMenu()
-	_, err := fmt.Scanln(&option)
-
+	option, err := readInt(in)
+	if err != nil {
+		return 0, err
+	}
 	if err = validateMenu(option, err); err != nil {
 		return 0, err
 	}
@@ -58,11 +70,12 @@ func DictionaryMenu() (int, error) {
 	return option, err
 }
 
-func GetAmoutWords() (int, error) {
-	var amount int
+func GetAmoutWords(in *bufio.Scanner) (int, error) {
 	amountWord()
-	_, err := fmt.Scanln(&amount)
-
+	amount, err := readInt(in)
+	if err != nil {
+		return 0, err
+	}
 	if err := validateMenu(amount, err); err != nil {
 		return 0, err
 	}
@@ -70,9 +83,12 @@ func GetAmoutWords() (int, error) {
 	return amount, nil
 }
 
-func GetTranslate(word string) string {
-	var t string
+func GetTranslate(word string, in *bufio.Scanner) (string, error) {
 	translate(word)
-	fmt.Scanln(&t)
-	return t
+	t, err := readLine(in)
+
+	if err != nil {
+		return "", err
+	}
+	return t, nil
 }
