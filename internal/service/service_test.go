@@ -114,6 +114,10 @@ func TestNewPair(t *testing.T) {
 				t.Errorf("expected dictionary %v, got %v", tt.wantStorage, tt.storage)
 			}
 
+			if len(tt.results) != len(tt.wantResults) {
+				t.Fatalf("expected lenth %v, got %v", len(tt.wantStorage), len(tt.storage))
+			}
+
 			for i := range tt.wantResults {
 				if !maps.Equal(tt.results[i], tt.wantResults[i]) {
 					t.Errorf("expected result %v, got %v", tt.results[i], tt.wantResults[i])
@@ -190,6 +194,13 @@ func TestDeletePair(t *testing.T) {
 				t.Fatalf("expected error %v, got %v", tt.wantErr, err)
 			}
 
+			if len(tt.storage) != len(tt.wantStorage) {
+				t.Fatalf("expected lenth %v, got %v", len(tt.wantStorage), len(tt.storage))
+			}
+
+			if len(tt.results) != len(tt.wantResults) {
+				t.Fatalf("expected lenth %v, got %v", len(tt.wantResults), len(tt.results))
+			}
 			if !maps.Equal(tt.storage, tt.wantStorage) {
 				t.Errorf("expected dictionary %v, got %v", tt.wantStorage, tt.storage)
 			}
@@ -226,6 +237,10 @@ func TestNewPairFakeStorage(t *testing.T) {
 		t.Fatalf("expected error %v, got %v", wantErr, err)
 	}
 
+	if len(oneResult) != len(wantResults) {
+		t.Fatalf("expected index %v, got %v", len(wantResults), len(oneResult))
+	}
+
 	for i := range wantResults {
 		if !maps.Equal(oneResult[i], wantResults[i]) {
 			t.Errorf("expected result %v, got %v", oneResult[i], wantResults[i])
@@ -255,6 +270,9 @@ func TestDeletePairFakeStorage(t *testing.T) {
 		t.Fatalf("expected error %v, got %v", wantErr, err)
 	}
 
+	if len(oneResult) != len(wantResults) {
+		t.Fatalf("expected index %v, got %v", len(wantResults), len(oneResult))
+	}
 	for i := range wantResults {
 		if !maps.Equal(oneResult[i], wantResults[i]) {
 			t.Errorf("expected result %v, got %v", oneResult[i], wantResults[i])

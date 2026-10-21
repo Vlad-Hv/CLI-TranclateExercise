@@ -71,4 +71,10 @@ func TestReturnInfo(t *testing.T) {
 	if !maps.Equal(wantMap, result) {
 		t.Errorf("expected map %v, got %v", wantMap, result)
 	}
+
+	result["Bird"] = "changed"
+
+	if !maps.Equal(wantMap, dictionary) {
+		t.Errorf("expected map %v, got %v", wantMap, dictionary)
+	}
 }
